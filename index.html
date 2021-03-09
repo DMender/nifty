@@ -136,13 +136,18 @@
                     });
 
                 var bored,hungry,dirty,sad;
-                var score = 0;
+                var score = "loading...";
                 
                 $.ajax({
                     type: "GET",
                     url: "https://api.opensea.io/api/v1/asset/0x06012c8cf97bead5deae237070f9587f8e7a266d/556324/",
                     success: function (result, status, xhr) {
                         var database = firebase.database();
+                        var scoreRef = firebase.database().ref('pets/' + result.token_id + '/score');
+                        scoreRef.once('value', (snapshot) => {
+                            const data = snapshot.val();
+                            score = data;
+                        });
                         var content = $("#content");
                         var mood = "satisfied"
                         content.append("<br/><h1 id='name'>" + result.name + "</h1>");
@@ -153,16 +158,6 @@
                         $("img").click(function(){
                             alert("boop");
                         });
-                        database.child("pets").child(result.token_id).child("score").get().then(function(snapshot) {
-                            if (snapshot.exists()) {
-                                var score = snapshot.val();
-                            }
-                            else {
-                                console.log("No data available");
-                            }
-                            }).catch(function(error) {
-                                console.error(error);
-                            });
                         setInterval(function(){
                             $("#feed").click(function(){
                                 if (hungry == true) {
@@ -231,17 +226,18 @@
                                     break;
                                 default:
                                     if (mood == "satisfied") {
-                                        var scoreRef = firebase.database().ref('pets/' + result.token_id + '/score');
+                                        scoreRef = firebase.database().ref('pets/' + result.token_id + '/score');
                                         scoreRef.once('value', (snapshot) => {
                                             const data = snapshot.val();
-                                            score += data;
-                                        });
-                                        firebase.database().ref('pets/' + result.token_id).set({
-                                            score: score,
+                                            score = data;
+                                            score += 1;
+                                            firebase.database().ref('pets/' + result.token_id).set({
+                                                score: score,
+                                            });
                                         });
                                         }
                             }
-                        }, 50);
+                        }, 5000);
                     },
                     error: function (xhr, status, error) {
                         alert("Result: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
