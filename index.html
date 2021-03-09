@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html lang="en-us">
-    <head>
-        <title>
-            Nfty Pets!
-        </title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script
-  src="https://code.jquery.com/jquery-3.6.0.min.js"
-  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-  crossorigin="anonymous"></script>
-  <style>
+<head>
+    <title>
+        Nfty Pets!
+    </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
         @import url('https://fonts.googleapis.com/css2?family=RocknRoll+One&display=swap');
-        * {
+        html {
             font-family: 'RocknRoll One', sans-serif;
             background-color: #8AC926;
             color: #8AC926;
@@ -25,225 +21,17 @@
             border-radius: 70px;
         }
         h1, h2, h3 {
-            background-color: #1982C4;
-            margin-left: 5rem;
-            text-align: left;
-        }
-        #content, #buttons {
-            border-radius: 50px;
-            width: 50vw;
-            max-width: 500px;
-            padding: 0%;
-            margin: auto;
-            text-align: left;
-            background-color: #1982C4;
-        }
-        #buttons {
+            color: #6A4C93;
+            background-color: none;
             text-align: center;
         }
-        img {
-            border: 1vw solid #6A4C93;
-            border-radius: 100px;
-            width: 100%;
-            padding: -10%;
-            margin: 0%;
-            background-image: url('background.png');
-            background-repeat: no-repeat;
-            background-attachment: left; 
-            background-size: 100%;
-        }
-        input {
-            border: .7vw solid #6A4C93;
-            border-radius: 20px;
-            width: 20vw;
-            max-width: 200px;
-            padding: 3%;
-            margin: 1%;
-            font-size: 2vw;
-            font-family: 'RocknRoll One', sans-serif;
-            background-color: #FFCA3A;
-            font-weight: bold;
-            color: #6A4C93;
-        }
-        input:hover {
-            border: .9vw solid #6A4C93;
-            font-weight: bolder;
-        }
-        input:active {
-            border: .9vw solid #FFCA3A;
-            background-color: #6A4C93;
-            font-weight: bolder;
-            color: #FFCA3A;
-        }
-  </style>
-    </head>
-    <body>
-        <div id="container">
-            <div id="content">
-            </div>
-            <div id="buttons">
-                <h3 id="mood"></h3>
-                <input type="button" value="FEED" id="feed"/>
-                <input type="button" value="PLAY" id="play"/>
-                <input type="button" value="GROOM" id="groom"/>
-                <input type="button" value="SNUG" id="snug"/>
-            </div>
-        <br/><br/>
-        </div>
-            <!-- Insert these scripts at the bottom of the HTML, but before you use any Firebase services -->
-
-            <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
-            <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-app.js"></script>
-
-            <!-- Add Firebase products that you want to use -->
-            <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-auth.js"></script>
-            <script src="https://www.gstatic.com/firebasejs/8.2.10/firebase-database.js"></script>
-        <script>
-            $(document).ready(function () {
-
-                // Your web app's Firebase configuration
-                var firebaseConfig = {
-                    apiKey: "AIzaSyB5_svNceF842Lyl45TyhajnjqfVRtXoTE",
-                    authDomain: "pets-e1dd6.firebaseapp.com",
-                    databaseURL: "https://pets-e1dd6-default-rtdb.firebaseio.com",
-                    projectId: "pets-e1dd6",
-                    storageBucket: "pets-e1dd6.appspot.com",
-                    messagingSenderId: "244402320004",
-                    appId: "1:244402320004:web:a058fbc83e0f7bc72488d1"
-                };
-                // Initialize Firebase
-                firebase.initializeApp(firebaseConfig);
-            
-                firebase.auth().signInAnonymously()
-                .then(() => {
-                    // Signed in..
-                })
-                .catch((error) => {
-                    var errorCode = error.code;
-                    var errorMessage = error.message;
-                    // ...
-                });
-                firebase.auth().onAuthStateChanged((user) => {
-                    if (user) {
-                        // User is signed in, see docs for a list of available properties
-                        // https://firebase.google.com/docs/reference/js/firebase.User
-                        var uid = user.uid;
-                        // ...
-                    } else {
-                        // User is signed out
-                        // ...
-                    }
-                    });
-
-                var bored,hungry,dirty,sad;
-                var score = "loading...";
-                
-                $.ajax({
-                    type: "GET",
-                    url: "https://api.opensea.io/api/v1/asset/0x06012c8cf97bead5deae237070f9587f8e7a266d/556324/",
-                    success: function (result, status, xhr) {
-                        var database = firebase.database();
-                        var scoreRef = firebase.database().ref('pets/' + result.token_id + '/score');
-                        scoreRef.once('value', (snapshot) => {
-                            const data = snapshot.val();
-                            score = data;
-                        });
-                        var content = $("#content");
-                        var mood = "satisfied"
-                        content.append("<br/><h1 id='name'>" + result.name + "</h1>");
-                        content.append("<h2 id='owner'> Owned by: " + result.owner + "</h2>");
-                        content.append("<img src='" + result.image_url + "'/>");
-                        content.append("<h3 id='score'> Score: " + score + "</h3>")
-                        $("#mood").text(result.name + " is " + mood);
-                        $("img").click(function(){
-                            alert("boop");
-                        });
-                        setInterval(function(){
-                            $("#feed").click(function(){
-                                if (hungry == true) {
-                                    hungry = false;
-                                }
-                            });
-                            $("#play").click(function(){
-                                if (bored == true) {
-                                    bored = false;
-                                }
-                            });
-                            $("#groom").click(function(){
-                                if (dirty == true) {
-                                    dirty = false;
-                                }
-                            });
-                            $("#snug").click(function(){
-                                if (sad == true) {
-                                    sad = false;
-                                }
-                            });
-                            $("*").click(function() {
-                                mood = "satisfied";
-                                if (bored == true) {
-                                    mood = "bored";
-                                }
-                                if (sad == true) {
-                                    mood = "sad";
-                                }
-                                if (dirty == true) {
-                                    mood = "dirty";
-                                }
-                                if (hungry == true) {
-                                    mood = "hungry";
-                                }
-                                $("#mood").text(result.name + " is " + mood);
-                            });
-                            mood = "satisfied";
-                            if (bored == true) {
-                                mood = "bored";
-                            }
-                            if (sad == true) {
-                                mood = "sad";
-                            }
-                            if (dirty == true) {
-                                mood = "dirty";
-                            }
-                            if (hungry == true) {
-                                mood = "hungry";
-                            }
-                            $("#score").text("Score: " + score);
-                            $("#mood").text(result.name + " is " + mood);
-                            let dice = Math.floor(Math.random() * 40) + 1;
-                            switch (dice) {
-                                case 1:
-                                    hungry = true;
-                                    break;
-                                case 2:
-                                    sad = true;
-                                    break;
-                                case 3:
-                                    bored = true;
-                                    break;
-                                case 4:
-                                    dirty = true;
-                                    break;
-                                default:
-                                    if (mood == "satisfied") {
-                                        scoreRef = firebase.database().ref('pets/' + result.token_id + '/score');
-                                        scoreRef.once('value', (snapshot) => {
-                                            const data = snapshot.val();
-                                            score = data;
-                                            score += 1;
-                                            firebase.database().ref('pets/' + result.token_id).set({
-                                                score: score,
-                                            });
-                                        });
-                                        }
-                            }
-                        }, 5000);
-                    },
-                    error: function (xhr, status, error) {
-                        alert("Result: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
-                    }
-                });
-            });
-        </script>
-    </body>
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>NFTy PETS!</h1>
+        buy NFTy Pets on <a href="https://opensea.io/">OpenSea</a>
+    <a href="556324.html"><h2>EXAMPLE</h2></a>
+    </div>
+</body>
 </html>
