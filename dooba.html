@@ -150,8 +150,9 @@
                         });
                         var content = $("#content");
                         var mood = "satisfied";
+                        console.log(result.owner.username);
                         content.append("<br/><h1 id='name'>" + result.name + "</h1>");
-                        content.append("<h2 id='owner'> Owned by: " + result.owner.user.username + "</h2>");
+                        content.append("<h2 id='owner'> Owned by: " + result.owner[0] + "</h2>");
                         content.append("<img src='" + result.image_url + "'/>");
                         content.append("<h3 id='score'> Score: " + score + "</h3>")
                         $("#mood").text(result.name + " is " + mood);
