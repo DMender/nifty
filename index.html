@@ -26,6 +26,8 @@
         }
         h1, h2, h3 {
             background-color: #1982C4;
+            margin-left: 5rem;
+            text-align: left;
         }
         #content, #buttons {
             border-radius: 50px;
@@ -90,7 +92,8 @@
         </div>
         <script>
             $(document).ready(function () {
-                var name;
+                var bored,hungry,dirty,sad;
+                var score = 0; //get from firebase
                 $.ajax({
                     type: "GET",
                     url: "https://api.opensea.io/api/v1/asset/0x06012c8cf97bead5deae237070f9587f8e7a266d/556324/",
@@ -100,22 +103,85 @@
                         content.append("<br/><h1 id='name'>" + result.name + "</h1>");
                         content.append("<h2 id='owner'> Owned by: " + result.owner + "</h2>");
                         content.append("<img src='" + result.image_url + "'/>");
+                        content.append("<h3 id='score'> Score: " + score + "</h3>")
                         $("#mood").text(result.name + " is " + mood);
-                        $("#feed").click(function(){
-                            alert("fed");
-                        });
-                        $("#play").click(function(){
-                            alert("played");
-                        });
-                        $("#groom").click(function(){
-                            alert("clean");
-                        });
-                        $("#snug").click(function(){
-                            alert("happy");
-                        });
                         $("img").click(function(){
                             alert("boop");
                         });
+                        setInterval(function(){
+                            $("#feed").click(function(){
+                                if (hungry == true) {
+                                    hungry = false;
+                                }
+                            });
+                            $("#play").click(function(){
+                                if (bored == true) {
+                                    bored = false;
+                                }
+                            });
+                            $("#groom").click(function(){
+                                if (dirty == true) {
+                                    dirty = false;
+                                }
+                            });
+                            $("#snug").click(function(){
+                                if (sad == true) {
+                                    sad = false;
+                                }
+                            });
+                            $("*").click(function() {
+                                mood = "satisfied";
+                                if (bored == true) {
+                                    mood = "bored";
+                                }
+                                if (sad == true) {
+                                    mood = "sad";
+                                }
+                                if (dirty == true) {
+                                    mood = "dirty";
+                                }
+                                if (hungry == true) {
+                                    mood = "hungry";
+                                }
+                                $("#mood").text(result.name + " is " + mood);
+                            });
+                            mood = "satisfied";
+                            if (bored == true) {
+                                mood = "bored";
+                            }
+                            if (sad == true) {
+                                mood = "sad";
+                            }
+                            if (dirty == true) {
+                                mood = "dirty";
+                            }
+                            if (hungry == true) {
+                                mood = "hungry";
+                            }
+                            $("#score").text("Score: " + score);
+                            $("#mood").text(result.name + " is " + mood);
+                            let dice = Math.floor(Math.random() * 40) + 1;
+                            switch (dice) {
+                                case 1:
+                                    hungry = true;
+                                    break;
+                                case 2:
+                                    sad = true;
+                                    break;
+                                case 3:
+                                    bored = true;
+                                    break;
+                                case 4:
+                                    dirty = true;
+                                    break;
+                                default:
+                                    if (mood == "satisfied") {
+                                            //get score
+                                            score += 1;
+                                            //return score
+                                        }
+                            }
+                        }, 5000);
                     },
                     error: function (xhr, status, error) {
                         alert("Result: " + status + " " + error + " " + xhr.status + " " + xhr.statusText)
