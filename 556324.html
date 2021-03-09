@@ -151,7 +151,7 @@
                         var content = $("#content");
                         var mood = "satisfied"
                         content.append("<br/><h1 id='name'>" + result.name + "</h1>");
-                        content.append("<h2 id='owner'> Owned by: " + result.owner + "</h2>");
+                        content.append("<h2 id='owner'> Owned by: " + result.owner.user + "</h2>");
                         content.append("<img src='" + result.image_url + "'/>");
                         content.append("<h3 id='score'> Score: " + score + "</h3>")
                         $("#mood").text(result.name + " is " + mood);
